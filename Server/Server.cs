@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace BasicChatRoomServer
 {
-    class Program
+    class Server
     {
         static Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
 
@@ -26,7 +26,7 @@ namespace BasicChatRoomServer
                 server = new TcpListener(localAddress, server_port);
                 server.Start();
 
-                Console.WriteLine("Server is listening on port " + server_port);
+                Console.WriteLine($"[Chat-Room] Server is listening: {localAddress}:{server_port}");
 
                 while (true)
                 {
@@ -56,28 +56,28 @@ namespace BasicChatRoomServer
             NetworkStream stream = client.GetStream();
 
             Byte[] data;
-            int PreviousBytes;
+            int readBytes;
 
             while (true)
             {
                 data = new byte[1024];
-                PreviousBytes = 0;
+                readBytes = 0;
 
                 try
                 {
-                    PreviousBytes = stream.Read(data, 0, data.Length);
+                    readBytes = stream.Read(data, 0, data.Length);
                 }
                 catch
                 {
                     break;
                 }
 
-                if (PreviousBytes == 0)
+                if (readBytes == 0)
                 {
                     break;
                 }
 
-                string recievedData = Encoding.ASCII.GetString(data, 0, PreviousBytes);
+                string recievedData = Encoding.ASCII.GetString(data, 0, readBytes);
                 Console.WriteLine($"Recieved data from {IDClient}: {recievedData}");
             }
 
